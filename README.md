@@ -1,4 +1,4 @@
-ZDB Tests — Usage
+WinIBW-testrunner — Usage
 ==================
 
 This folder contains unit tests for ZDB helper functions. Two runner helpers are provided:
