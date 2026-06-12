@@ -1,6 +1,8 @@
 WinIBW-testrunner — Usage
 ==================
 
+Important: Include testrunner script files always AFTER test definitions (WinIBW will load from botton to top). Otherwise you will get the error that TestRunner is undefined.
+
 This folder contains unit tests for ZDB helper functions. Two runner helpers are provided:
 
 - `runAllTests()` — runs all tests in the loaded test suite.
@@ -28,7 +30,7 @@ Notes
 -----
 
 - If the TestRunner harness is not loaded, `runAllTests()` and `runTest()` will attempt to notify you via `WScript.Shell.Popup` (if available) or by appending a message to the active WinIBW4 window.
-- Tests are defined using `TestRunner.add(name, fn)` in `zdb.tests.js`.
+- Tests are defined using `TestRunner.add(name, fn)`.
 - Open the tests in `zdb.tests.js` to see available test names.
 
 Writing tests
@@ -52,5 +54,5 @@ TestRunner.add("my_function_basic", function() {
 - Keep tests small and focused: one logical assertion group per test name.
 - Name tests with a descriptive prefix (module) and short description (e.g. `parseField_simple`).
 
-Running only one test from code or Script Manager uses `runTest('test_name')` as documented above.
+Running only one test from code uses `runTest('test_name')` as documented above.
 
