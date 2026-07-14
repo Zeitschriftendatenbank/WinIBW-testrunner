@@ -1,9 +1,9 @@
-function runTest(name) {
+function runTest() {
   if (typeof TestRunner === 'undefined') {
     Notify.error('TestRunner not loaded');
     return;
   }
-  TestRunner.run(name);
+  TestRunner.runSelect();
 }
 
 function runAllTests() {
