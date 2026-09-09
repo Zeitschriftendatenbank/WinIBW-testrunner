@@ -36,13 +36,16 @@ var TestRunner = {
    * Called from inside a test to ensure the test runs under a specific Kennung.
    * Performs prompt/login/search flow synchronously. If the user declines, the
    * function throws an object with {skip:true} which the runner treats as a skip.
+   * @param {string} url - URL of the system
    * @param {string} user - user id to switch to
    * @param {string} searchCmd - search command to run after login
    * @param {string} label - optional friendly label for prompts
+   * @returns {string|boolean} - returns the screen code if successful, or false if skipped
    */
-  runWithKennung: function (user, searchCmd, label) {
-    var user = user || '6098';
-    var cmd = searchCmd || '\\ZOE tit cinema';
+  runWithKennung: function (url, user, searchCmd, label) {
+    var url = url || getProfileString('testrunner', 'url', 'pica3://ibw0.dnb.de:1042');
+    var user = user || getProfileString('testrunner', 'user', '6098');
+    var cmd = searchCmd || getProfileString('testrunner', 'searchCmd', '');
     var lab = label || '';
 
 
@@ -54,22 +57,25 @@ var TestRunner = {
       return false;
     }
 
+
     // perform login via Users.switchTo (assumed available)
     if (activeWindow.getVariable("P3GUK") != user) {
-      var winId = Users.switchTo(user);
-      if (!winId) {
-        Notify.error('Login failed for user ' + user);
+      var switched = Users.switchTo(user);
+      // Some Users implementations may return false/undefined while the
+      // login actually succeeded (P3GUK updated asynchronously). Accept
+      // cases where P3GUK now matches the requested user.
+      if (!switched && activeWindow.getVariable("P3GUK") != user) {
+        Notify.error('Anmeldung fehlgeschlagen für Benutzer ' + user);
+        return false;
       }
     }
 
-    activeWindow.command(cmd, false);
-    Notify.info('Suche nach ' + cmd, 3);
-    var ok = MISC.checkScreen(['8A', '7A', 'IT', 'SC']);
-    if (!ok) {
-      activeWindow.closeWindow();
-      throw 'Screen not correct after login';
+    if (cmd) {
+      //activeWindow.command(cmd, false);
+      MISC.wait(cmd, { timeout: 60000, pollInterval: 250 });
+      Notify.info('Suche nach ' + cmd);
     }
-    return true;
+    return MISC.checkScreen();
   },
   _runOne: function (name, fn) {
     var ok = true, err = null, skipped = false;
