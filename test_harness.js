@@ -1,3 +1,5 @@
+var Users;
+
 var TestRunner = {
   tests: {},
   results: [],
@@ -48,18 +50,18 @@ var TestRunner = {
     var cmd = searchCmd || getProfileString('testrunner', 'searchCmd', '');
     var lab = label || '';
 
-
-    var thePrompter = utility.newPrompter();
-    var doLogin = false;
-    try { doLogin = thePrompter.confirm('Test Login', 'Möchten Sie den Test ' + lab + ' mit der Kennung ' + user + ' ausführen?'); } catch (e) { doLogin = false; }
-    if (!doLogin) {
-      // signal skip to caller via throw
-      return false;
-    }
-
-
     // perform login via Users.switchTo (assumed available)
     if (activeWindow.getVariable("P3GUK") != user) {
+      var thePrompter = utility.newPrompter();
+      var doLogin = false;
+      doLogin = thePrompter.confirm('Test Login', 'Möchten Sie den Test ' + lab + ' mit der Kennung ' + user + ' ausführen?');
+      if (!doLogin) {
+        // signal skip to caller via throw
+        return false;
+      }
+
+
+
       var switched = Users.switchTo(user);
       // Some Users implementations may return false/undefined while the
       // login actually succeeded (P3GUK updated asynchronously). Accept
@@ -71,9 +73,9 @@ var TestRunner = {
     }
 
     if (cmd) {
-      //activeWindow.command(cmd, false);
-      MISC.wait(cmd, { timeout: 60000, pollInterval: 250 });
-      Notify.info('Suche nach ' + cmd);
+      activeWindow.command(cmd, false);
+      //MISC.wait(cmd, { timeout: 60000, pollInterval: 250 });
+      Notify.popup('Suche nach ' + cmd, 'Testharness', 'info', 0);
     }
     return MISC.checkScreen();
   },
