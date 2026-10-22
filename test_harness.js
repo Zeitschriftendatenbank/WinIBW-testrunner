@@ -1,4 +1,5 @@
 var Users;
+var Notify;
 
 var TestRunner = {
   tests: {},
